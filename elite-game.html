@@ -5,67 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Elite Space Trading Game</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-        }
-        #game {
-            margin: 20px;
-        }
+        body { font-family: Arial, sans-serif; }
+        canvas { border: 1px solid black; }
     </style>
 </head>
 <body>
-    <div id="game">
-        <h1>Elite Space Trading Game</h1>
-        <button id="startGame">Start Game</button>
-        <div id="gameOutput"></div>
-    </div>
-
+    <h1>Welcome to Elite Space Trading Game</h1>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
     <script>
+        // Initialize game settings
         const galaxies = 8;
-        const starSystems = 256;
-        let player = {
-            credits: 1000,
-            ship: {
-                name: "Starter Ship",
-                upgrades: 0
-            }
-        };
-        
-        function generateGalaxy() {
-            const galaxy = [];
-            for (let i = 0; i < starSystems; i++) {
-                galaxy.push({
-                    name: `Star System ${i + 1}`,
-                    tradeGoods: Math.floor(Math.random() * 100),
-                });
-            }
-            return galaxy;
+        const starSystemsPerGalaxy = 256;
+        const player = { ship: null, funds: 1000, cargo: 0, combatRank: 0 };
+
+        function initializeGame() {
+            player.ship = createShip();
+            generateGalaxies(galaxies, starSystemsPerGalaxy);
+            loadGameProgress();
         }
 
-        function startGame() {
-            let gameOutput = 'Game Started!\n';
-            for (let i = 0; i < galaxies; i++) {
-                gameOutput += `Galaxy ${i + 1}: ${generateGalaxy().map(system => system.name).join(", ")}\n`;
+        function createShip() {
+            return { name: 'Eagle', speed: 10, upgrades: [], fuel: 100 };
+        }
+
+        function generateGalaxies(galaxyCount, systemCount) {
+            const galaxies = [];
+            for (let i = 0; i < galaxyCount; i++) {
+                const systems = [];
+                for (let j = 0; j < systemCount; j++) {
+                    systems.push({ name: `System ${j + 1}`, resources: Math.random() * 100 });
+                }
+                galaxies.push(systems);
             }
-            document.getElementById('gameOutput').innerText = gameOutput;
+            return galaxies;
         }
 
-        document.getElementById('startGame').onclick = startGame;
-
-        function saveGame() {
-            localStorage.setItem('playerData', JSON.stringify(player));
+        function saveGameProgress() {
+            localStorage.setItem('eliteGameProgress', JSON.stringify(player));
         }
 
-        function loadGame() {
-            const savedData = localStorage.getItem('playerData');
-            if (savedData) {
-                player = JSON.parse(savedData);
+        function loadGameProgress() {
+            const savedProgress = localStorage.getItem('eliteGameProgress');
+            if (savedProgress) {
+                Object.assign(player, JSON.parse(savedProgress));
             }
         }
 
-        window.onload = loadGame;
+        function trade(system) {
+            // Placeholder for trading logic
+            player.funds += 100; // Example profit for trading
+            saveGameProgress();
+        }
+
+        function combat() {
+            // Placeholder for combat logic
+            player.combatRank += 1;
+            saveGameProgress();
+        }
+
+        function render() {
+            // Simple rendering logic for the game
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'green';
+            ctx.fillRect(10, 10, 50, 50);
+            // Add more rendering logic as needed
+        }
+
+        function gameLoop() {
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        initializeGame();
+        gameLoop();
     </script>
 </body>
 </html>

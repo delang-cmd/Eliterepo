@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Space Trading Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+        #game {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <h1>Elite Space Trading Game</h1>
+        <button id="startGame">Start Game</button>
+        <div id="gameOutput"></div>
+    </div>
+
+    <script>
+        const galaxies = 8;
+        const starSystems = 256;
+        let player = {
+            credits: 1000,
+            ship: {
+                name: "Starter Ship",
+                upgrades: 0
+            }
+        };
+        
+        function generateGalaxy() {
+            const galaxy = [];
+            for (let i = 0; i < starSystems; i++) {
+                galaxy.push({
+                    name: `Star System ${i + 1}`,
+                    tradeGoods: Math.floor(Math.random() * 100),
+                });
+            }
+            return galaxy;
+        }
+
+        function startGame() {
+            let gameOutput = 'Game Started!\n';
+            for (let i = 0; i < galaxies; i++) {
+                gameOutput += `Galaxy ${i + 1}: ${generateGalaxy().map(system => system.name).join(", ")}\n`;
+            }
+            document.getElementById('gameOutput').innerText = gameOutput;
+        }
+
+        document.getElementById('startGame').onclick = startGame;
+
+        function saveGame() {
+            localStorage.setItem('playerData', JSON.stringify(player));
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem('playerData');
+            if (savedData) {
+                player = JSON.parse(savedData);
+            }
+        }
+
+        window.onload = loadGame;
+    </script>
+</body>
+</html>
